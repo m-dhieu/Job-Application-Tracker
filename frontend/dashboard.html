@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Job Application Tracker Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar-title">JOB APPLICATION TRACKER</div>
+      <nav>
+        <ul>
+          <li id="nav-dashboard" class="active"><span class="icon">🏠</span>Dashboard</li>
+          <li id="nav-applications"><span class="icon">📄</span>Applications</li>
+          <li id="nav-job-search"><span class="icon">🔍</span>Job Search</li>
+          <li id="nav-cv-review"><span class="icon">📝</span>CV Review</li>
+          <li id="nav-essay-review"><span class="icon">✍️</span>Essay Review</li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <!-- Dashboard Sections -->
+      <section id="dashboard-section">
+        <div class="dashboard-header">
+          <h2>Dashboard</h2>
+          <button class="menu-btn">&#9776;</button>
+        </div>
+        <div class="stats-cards">
+          <div class="stat-card">
+            <div class="stat-title">Applications Applied</div>
+            <div class="stat-value" id="applied-count">12</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Interviews</div>
+            <div class="stat-value" id="interview-count">3</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Offers</div>
+            <div class="stat-value" id="offer-count">1</div>
+          </div>
+        </div>
+        <div class="applications-section">
+          <div class="applications-header">
+            <h3>Job Applications</h3>
+            <button class="filter-btn">Filter ▾</button>
+          </div>
+          <table class="applications-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Job Title</th>
+                <th>Status</th>
+                <th>Date Applied</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="applications-body">
+              <tr>
+                <td><strong>Company A</strong></td>
+                <td>Software Engineer</td>
+                <td>Applied</td>
+                <td>04/25/2024</td>
+                <td class="arrow">&gt;</td>
+              </tr>
+              <tr>
+                <td><strong>Company B</strong></td>
+                <td>Product Manager</td>
+                <td>Interview</td>
+                <td>04/19/2024</td>
+                <td class="arrow">&gt;</td>
+              </tr>
+              <tr>
+                <td><strong>Company C</strong></td>
+                <td>Data Analyst</td>
+                <td>Offer</td>
+                <td>04/16/2024</td>
+                <td class="arrow">&gt;</td>
+              </tr>
+              <tr>
+                <td><strong>Company D</strong></td>
+                <td>UK Designer</td>
+                <td>Rejected</td>
+                <td>04/10/2024</td>
+                <td class="arrow">&gt;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Job Search Section (New) -->
+      <section id="job-search-section" style="display:none; padding: 20px; background:#fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(24,49,83,0.07);">
+        <h3>Job Search</h3>
+        <div style="margin-bottom: 15px;">
+          <label for="filter-keyword">Keyword:</label>
+          <input type="text" id="filter-keyword" placeholder="e.g., Engineer" />
+          <label for="filter-location" style="margin-left: 15px;">Location:</label>
+          <input type="text" id="filter-location" placeholder="e.g., Remote or City" />
+          <label for="sort-order" style="margin-left: 15px;">Sort by:</label>
+          <select id="sort-order">
+            <option value="relevance">Relevance</option>
+            <option value="date_desc">Date (Newest)</option>
+            <option value="date_asc">Date (Oldest)</option>
+          </select>
+          <button id="search-jobs-btn" style="margin-left: 15px; padding: 5px 12px;">Search</button>
+        </div>
+        <div id="job-search-results" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
+          <p>Enter search criteria and click "Search" to load jobs.</p>
+        </div>
+      </section>
+
+      <!-- CV Review Section -->
+      <section id="cv-review-section" style="display:none; padding: 20px; background:#fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(24,49,83,0.07);">
+        <h3>CV Review</h3>
+        <input type="file" id="cv-file-input" accept=".pdf,.doc,.docx,.txt" />
+        <button id="upload-cv-btn" style="margin-top: 10px; padding: 8px 16px;">Upload & Review CV</button>
+        <pre id="cv-review-result" style="margin-top: 20px; background: #eef3fb; padding: 12px; border-radius: 8px; white-space: pre-wrap;"></pre>
+      </section>
+
+      <!-- Essay Review Section -->
+      <section id="essay-review-section" style="display:none; padding: 20px; background:#fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(24,49,83,0.07);">
+        <h3>Essay / Cover Letter Review</h3>
+        <p>Paste your essay below or upload a .txt file:</p>
+        <textarea id="essay-text" rows="10" style="width:100%; padding:10px; font-family: monospace;" placeholder="Paste your essay or cover letter here..."></textarea>
+        <div style="margin-top: 10px;">
+          <input type="file" id="essay-file-input" accept=".txt" />
+        </div>
+        <button id="review-essay-btn" style="margin-top: 15px; padding: 10px 20px; cursor:pointer;">Review Essay</button>
+        <div id="review-results" style="margin-top: 20px; font-family: Arial, sans-serif; white-space: pre-wrap;"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
+
