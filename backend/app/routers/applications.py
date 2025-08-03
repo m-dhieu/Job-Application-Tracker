@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends, status, Query
 from typing import Optional, List
-from backend.app.models import (
+from app.models import (
     JobApplicationCreate, JobApplicationResponse, JobApplicationUpdate,
     ApplicationStatusUpdate, ApplicationStatusHistory, MessageResponse, SessionUser
 )
-from backend.app.database import db_manager
-from backend.app.auth import get_current_user
+from app.database import db_manager
+from app.auth import get_current_user
 
 router = APIRouter()
 

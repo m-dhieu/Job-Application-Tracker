@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from backend.app.models import (
+from app.models import (
     UserCreate, UserLogin, UserResponse, LoginResponse, 
     MessageResponse, ErrorResponse, SessionUser
 )
-from backend.app.database import db_manager
-from backend.app.auth import get_current_user, parse_skills, validate_password_strength
+from app.database import db_manager
+from app.auth import get_current_user, parse_skills, validate_password_strength
 import json
 
 router = APIRouter()

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from backend.app.models import (
+from app.models import (
     UserProfile, UserResponse, MessageResponse, SessionUser
 )
-from backend.app.database import db_manager
-from backend.app.auth import get_current_user, parse_skills, serialize_skills
+from app.database import db_manager
+from app.auth import get_current_user, parse_skills, serialize_skills
 
 router = APIRouter()
 
