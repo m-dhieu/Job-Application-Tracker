@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 from .connection import get_connection, set_database_path
 from .models import ALL_TABLES
 from .auth import AuthManager
@@ -31,7 +31,7 @@ class DatabaseManager:
             conn.commit()
 
     # Authentication methods
-    def hash_password(self, password: str) -> tuple[str, str]:
+    def hash_password(self, password: str) -> Tuple[str, str]:
         """Hash password with salt"""
         return self.auth_manager.hash_password(password)
 
