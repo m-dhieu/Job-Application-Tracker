@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Header, status
-from typing import Optional
+from typing import Optional, Tuple
 from app.database import db_manager
 from app.models import SessionUser
 import json
@@ -61,7 +61,7 @@ def validate_email_format(email: str) -> bool:
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
 
-def validate_password_strength(password: str) -> tuple[bool, str]:
+def validate_password_strength(password: str) -> Tuple[bool, str]:
     """Validate password strength"""
     if len(password) < 6:
         return False, "Password must be at least 6 characters long"
