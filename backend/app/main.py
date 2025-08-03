@@ -25,10 +25,9 @@ app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(applications.router, prefix="/api", tags=["applications"])
 
 origins = [
-    "http://localhost",  # adjust to your frontend host if needed (strictly only for reproduction)
+    "http://localhost",  
     "http://localhost:3000",
     "http://localhost:8080",
-    # Add production/deploy frontend URLs here as needed (strictly only for reproduction)
 ]
 
 app.add_middleware(
