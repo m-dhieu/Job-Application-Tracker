@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Header, status
 from typing import Optional
-from backend.app.database import db_manager
-from backend.app.models import SessionUser
+from app.database import db_manager
+from app.models import SessionUser
 import json
 
 async def get_current_user(authorization: Optional[str] = Header(None)) -> SessionUser:
