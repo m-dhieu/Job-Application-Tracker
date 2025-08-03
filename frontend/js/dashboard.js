@@ -1,7 +1,7 @@
 // Dashboard page script
 
 // Backend base URL
-var BASE_URL = "http://localhost:8000";
+var BASE_URL = "http://localhost:8080";
 
 // Logout function
 function logout() {
@@ -12,7 +12,7 @@ function logout() {
   sessionStorage.removeItem('user_id');
 
   // Redirect to login page
-  window.location.href = 'log-in.html';
+  window.location.href = '/static/log-in.html';
 }
 
 // Sidebar navigation elements
