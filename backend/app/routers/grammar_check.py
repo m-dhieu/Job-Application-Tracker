@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, HTTPException
-from backend.app.services.grammar_service import check_grammar
+from app.services.grammar_service import check_grammar
 from pydantic import BaseModel
 
 class TextInput(BaseModel):
