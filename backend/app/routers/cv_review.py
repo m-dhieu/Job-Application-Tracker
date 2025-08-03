@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from backend.app.services.cv_service import parse_resume
+from app.services.cv_service import parse_resume
 
 router = APIRouter()
 
