@@ -11,11 +11,10 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI(title="Job Tracker API")
 
 # Get the project root directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend_build")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(_file_)))
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="/app/frontend_build"), name="static")
+app.mount("/frontend", StaticFiles(directory=os.path.join(BASE_DIR, "frontend")), name="frontend")
 
 # Include routers
 app.include_router(jobs.router, prefix="/api/jobs", tags=["jobs"])
@@ -44,23 +43,9 @@ app.add_middleware(
 @app.get("/")
 async def root():
     """Serve the main index.html page"""
-    return FileResponse(os.path.join(BASE_DIR, "index.html"))
-
-# Serve dashboard.html on /dashboard
-@app.get("/dashboard")
-async def dashboard():
-    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
-
-# Serve any static asset
-@app.get("/static/{file_path:path}")
-async def static_file(file_path: str):
-    full_path = os.path.join(FRONTEND_DIR, file_path)
-    if os.path.isfile(full_path):
-        return FileResponse(full_path)
-    return {"detail": "Not Found"}, 404
-
+    index_path = os.path.join(BASE_DIR, "index.html")
+    return FileResponse(index_path)
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
-
