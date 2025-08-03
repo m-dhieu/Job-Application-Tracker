@@ -10,3 +10,4 @@ python-docx
 pydantic[email]
 python-jose[cryptography]
 passlib[bcrypt]
+beautifulsoup4
