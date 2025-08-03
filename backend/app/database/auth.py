@@ -1,14 +1,14 @@
 import hashlib
 import secrets
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 from .connection import get_connection
 
 class AuthManager:
     """Handle authentication-related database operations"""
 
     @staticmethod
-    def hash_password(password: str) -> tuple[str, str]:
+    def hash_password(password: str) -> Tuple[str, str]:
         """Hash password with salt"""
         salt = secrets.token_hex(32)
         password_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)
