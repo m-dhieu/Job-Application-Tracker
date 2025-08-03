@@ -25,10 +25,10 @@ app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(applications.router, prefix="/api", tags=["applications"])
 
 origins = [
-    "http://localhost",  # adjust to your frontend host if needed
+    "http://localhost",  # adjust to your frontend host if needed (strictly only for reproduction)
     "http://localhost:3000",
-    "http://localhost:8000",
-    # Add production/deploy frontend URLs here as needed
+    "http://localhost:8080",
+    # Add production/deploy frontend URLs here as needed (strictly only for reproduction)
 ]
 
 app.add_middleware(
@@ -47,5 +47,5 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
 
