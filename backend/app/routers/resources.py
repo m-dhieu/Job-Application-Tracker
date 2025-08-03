@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing import List, Dict, Any
-from backend.app.services.resource_service import fetch_resources
+from app.services.resource_service import fetch_resources
 
 router = APIRouter()
 
