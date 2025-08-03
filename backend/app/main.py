@@ -15,7 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend_build")
 
 # Mount static files
-app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+app.mount("/static", StaticFiles(directory="/app/frontend_build"), name="static")
 
 # Include routers
 app.include_router(jobs.router, prefix="/api/jobs", tags=["jobs"])
