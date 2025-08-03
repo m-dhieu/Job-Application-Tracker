@@ -12,10 +12,12 @@ app = FastAPI(title="Job Tracker API")
 
 # Get the project root directory
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend_build")
 
 # Mount static files
-app.mount("/frontend", StaticFiles(directory=os.path.join(BASE_DIR, "frontend")), name="frontend")
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
+# Include routers
 app.include_router(jobs.router, prefix="/api/jobs", tags=["jobs"])
 app.include_router(cv_review.router, prefix="/api/cv-review", tags=["cv-review"])
 app.include_router(grammar_check.router, prefix="/api/grammar-check", tags=["grammar-check"])
@@ -38,11 +40,25 @@ app.add_middleware(
     allow_headers=["*"],  # allow all headers
 )
 
+# Serve index.html on root
 @app.get("/")
 async def root():
     """Serve the main index.html page"""
-    index_path = os.path.join(BASE_DIR, "index.html")
-    return FileResponse(index_path)
+     return FileResponse(os.path.join(BASE_DIR, "index.html"))
+
+# Serve dashboard.html on /dashboard
+@app.get("/dashboard")
+async def dashboard():
+    return FileResponse(os.path.join(FRONTEND_DIR, "dashboard.html"))
+
+# Serve any static asset
+@app.get("/static/{file_path:path}")
+async def static_file(file_path: str):
+    full_path = os.path.join(FRONTEND_DIR, file_path)
+    if os.path.isfile(full_path):
+        return FileResponse(full_path)
+    return {"detail": "Not Found"}, 404
+
 
 if __name__ == "__main__":
     import uvicorn

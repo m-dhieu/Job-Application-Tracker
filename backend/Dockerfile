@@ -15,13 +15,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY ./backend/app ./app
 
-# Copy frontend static files and index.html
-COPY ./frontend ./frontend
-COPY ./index.html ./index.html
+# Copy static files
+COPY ./frontend ./frontend_build
 
 # Expose container port (configurable via environment variable; default 8080)
 ENV PORT=8080
 EXPOSE $PORT
 
 # Run the FastAPI app with uvicorn
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
