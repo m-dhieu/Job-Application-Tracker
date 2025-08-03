@@ -1,11 +1,10 @@
 fastapi
-uvicorn
+uvicorn[standard]
 requests
 python-dotenv
 python-multipart
-python-docx
 PyPDF2
-databases[sqlite]
-aiosqlite
-sqlalchemy
-pydantic
+python-docx
+pydantic[email]
+python-jose[cryptography]
+passlib[bcrypt]

@@ -25,7 +25,10 @@
       <section id="dashboard-section">
         <div class="dashboard-header">
           <h2>Dashboard</h2>
-          <button class="menu-btn">&#9776;</button>
+          <div class="header-actions">
+            <button id="logout-btn" class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <button class="menu-btn">&#9776;</button>
+          </div>
         </div>
         <div class="stats-cards">
           <div class="stat-card">
@@ -43,16 +46,42 @@
         </div>
         <div class="applications-section">
           <div class="applications-header">
-            <h3>Job Applications</h3>
-            <button class="filter-btn">Filter ▾</button>
+            <h3>Recent Job Opportunities</h3>
+            <button class="filter-btn" onclick="toggleFilterPanel()">Filter ▾</button>
           </div>
+
+          <!-- Filter Panel -->
+          <div id="filter-panel" style="display: none; background: #f7faff; padding: 16px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #e6f0fa;">
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 200px;">
+                <label for="job-keyword-filter" style="display: block; margin-bottom: 4px; color: #6b7a90; font-size: 0.9rem;">🔍 Keyword (title, company):</label>
+                <input type="text" id="job-keyword-filter" placeholder="e.g., Engineer, Developer" style="width: 100%; padding: 8px 12px; border: 1px solid #e6f0fa; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box;">
+              </div>
+              <div style="flex: 1; min-width: 150px;">
+                <label for="job-status-filter" style="display: block; margin-bottom: 4px; color: #6b7a90; font-size: 0.9rem;">📊 Status:</label>
+                <select id="job-status-filter" style="width: 100%; padding: 8px 12px; border: 1px solid #e6f0fa; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box;">
+                  <option value="">All Statuses</option>
+                  <option value="Available">Available</option>
+                  <option value="New Posting">New Posting</option>
+                  <option value="Hot">Hot</option>
+                  <option value="Remote Available">Remote Available</option>
+                  <option value="Trending">Trending</option>
+                </select>
+              </div>
+              <div style="align-self: end;">
+                <button onclick="applyJobFilters()" style="background: #4a90e2; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-right: 8px;">Apply</button>
+                <button onclick="clearJobFilters()" style="background: #6b7a90; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">Clear</button>
+              </div>
+            </div>
+          </div>
+
           <table class="applications-table">
             <thead>
               <tr>
                 <th>Company</th>
                 <th>Job Title</th>
                 <th>Status</th>
-                <th>Date Applied</th>
+                <th>Posted Date</th>
                 <th></th>
               </tr>
             </thead>
@@ -90,7 +119,7 @@
         </div>
       </section>
 
-      <!-- Job Search Section (New) -->
+      <!-- Job Search Section -->
       <section id="job-search-section" style="display:none; padding: 20px; background:#fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(24,49,83,0.07);">
         <h3>Job Search</h3>
         <div style="margin-bottom: 15px;">
@@ -133,7 +162,88 @@
     </main>
   </div>
 
+  <!-- Job Details Modal -->
+  <div id="job-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 16px; max-width: 600px; width: 90%; max-height: 80%; overflow-y: auto; box-shadow: 0 8px 32px rgba(24,49,83,0.2);">
+      <div style="padding: 24px; border-bottom: 1px solid #e6f0fa;">
+        <div style="display: flex; justify-content: between; align-items: flex-start;">
+          <div style="flex: 1;">
+            <h2 id="modal-job-title" style="margin: 0 0 8px 0; color: #183153; font-size: 1.5rem;"></h2>
+            <p id="modal-company-name" style="margin: 0; color: #4a90e2; font-size: 1.1rem; font-weight: 600;"></p>
+          </div>
+          <button onclick="closeJobModal()" style="background: none; border: none; font-size: 1.5rem; color: #6b7a90; cursor: pointer; padding: 0; margin-left: 16px;">×</button>
+        </div>
+      </div>
+
+      <div style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; margin-bottom: 24px; padding: 16px; background: #f7faff; border-radius: 8px;">
+          <div style="text-align: center;">
+            <div style="color: #6b7a90; font-size: 0.9rem; margin-bottom: 4px;">Employment</div>
+            <div id="modal-employment-type" style="font-weight: bold; color: #183153;"></div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: #6b7a90; font-size: 0.9rem; margin-bottom: 4px;">Salary</div>
+            <div id="modal-salary" style="font-weight: bold; color: #183153;"></div>
+          </div>
+          <div style="text-align: center;">
+            <div style="color: #6b7a90; font-size: 0.9rem; margin-bottom: 4px;">Status</div>
+            <div id="modal-status" style="font-weight: bold; color: #4a90e2;"></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <h3 style="color: #183153; margin: 0 0 12px 0; font-size: 1.1rem;">Job Description</h3>
+          <div id="modal-description" style="color: #6b7a90; line-height: 1.6; background: #f7faff; padding: 16px; border-radius: 8px; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+
+        <div style="margin-bottom: 24px;" id="modal-categories-section">
+          <h3 style="color: #183153; margin: 0 0 12px 0; font-size: 1.1rem;">Categories</h3>
+          <div id="modal-categories" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button onclick="closeJobModal()" style="background: #6b7a90; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Close</button>
+          <button id="modal-apply-btn" onclick="applyToJob()" style="background: linear-gradient(135deg, #4a90e2, #357abd); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);">Apply Now 🚀</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources Modal -->
+  <div id="resources-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 16px; max-width: 700px; width: 90%; max-height: 80%; overflow-y: auto; box-shadow: 0 8px 32px rgba(24,49,83,0.2);">
+      <div style="padding: 24px; border-bottom: 1px solid #e6f0fa;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="margin: 0; color: #183153; font-size: 1.5rem;">📚 Learning Resources</h2>
+          <button onclick="closeResourcesModal()" style="background: none; border: none; font-size: 1.5rem; color: #6b7a90; cursor: pointer; padding: 0;">×</button>
+        </div>
+        <p id="resources-job-title" style="margin: 8px 0 0 0; color: #4a90e2; font-size: 1rem;"></p>
+      </div>
+
+      <div style="padding: 24px;">
+        <div id="resources-loading" style="text-align: center; padding: 20px; display: none;">
+          <div style="color: #6b7a90;">Loading skills and resources...</div>
+        </div>
+
+        <div id="resources-content">
+          <div style="margin-bottom: 24px;">
+            <h3 style="color: #183153; margin: 0 0 12px 0; font-size: 1.1rem;">🎯 Required Skills</h3>
+            <div id="skills-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;"></div>
+          </div>
+
+          <div>
+            <h3 style="color: #183153; margin: 0 0 12px 0; font-size: 1.1rem;">🔗 Learning Resources</h3>
+            <div id="resources-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; border-top: 1px solid #e6f0fa; padding-top: 20px;">
+          <button onclick="closeResourcesModal()" style="background: #6b7a90; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/dashboard.js"></script>
 </body>
 </html>
-
