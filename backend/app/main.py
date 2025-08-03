@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI(title="Job Tracker API")
 
 # Get the project root directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Mount static files
 app.mount("/frontend", StaticFiles(directory=os.path.join(BASE_DIR, "frontend")), name="frontend")
