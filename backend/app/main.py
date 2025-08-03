@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from backend.app.routers import jobs, cv_review, grammar_check, resources, auth, users, applications
+from app.routers import jobs, cv_review, grammar_check, resources, auth, users, applications
 from fastapi.middleware.cors import CORSMiddleware
 import os
 
