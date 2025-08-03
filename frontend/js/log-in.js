@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var email = emailInput.value.trim();
     var password = passwordInput.value.trim();
 
-    // Validate that both email and password are provided
+    // Validate both email and password are provided
     if (!email || !password) {
       alert('Please enter both email and password.');
       if (!email) {
@@ -50,11 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Log login information (for demonstration purposes)
+    // Log login information 
     console.log('Logging in with:', email, password);
 
-    // Redirect to dashboard page (replace with your actual destination)
-    window.location.href = '/static/dashboard.html';
+    // Redirect to dashboard page 
+    window.location.href = '/dashboard';
   });
 
   // Handle signup form submission
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var email = emailInput.value.trim();
     var password = passwordInput.value.trim();
 
-    // Validate all fields are filled out
+    // Validate filling all fields 
     if (!username || !email || !password) {
       alert('Please fill out all signup fields.');
       if (!username) {
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Log signup information (for demonstration purposes)
+    // Log signup information 
     console.log('Signing up with:', username, email, password);
 
     // Notify user of successful signup
@@ -97,4 +97,3 @@ document.addEventListener('DOMContentLoaded', function() {
     signupToggle.classList.remove('active');
   });
 });
-
