@@ -10,11 +10,12 @@ logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(title="Job Tracker API")
 
-# Get the project root directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Determine static files directory
+static_dir = "/app/static" if os.path.exists("/app/static") else "../frontend"
+index_file = "/app/index.html" if os.path.exists("/app/index.html") else "../../index.html"
 
-# Mount static files
-app.mount("/frontend", StaticFiles(directory=os.path.join(BASE_DIR, "frontend")), name="frontend")
+# Mount static files for frontend assets
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Include routers
 app.include_router(jobs.router, prefix="/api/jobs", tags=["jobs"])
@@ -29,6 +30,7 @@ origins = [
     "http://localhost",  
     "http://localhost:3000",
     "http://localhost:8080",
+    "*"  # Allow all origins for development
 ]
 
 app.add_middleware(
@@ -43,8 +45,22 @@ app.add_middleware(
 @app.get("/")
 async def root():
     """Serve the main index.html page"""
-    index_path = os.path.join(BASE_DIR, "index.html")
-    return FileResponse(index_path)
+    return FileResponse(index_file)
+
+# Serve dashboard.html on /dashboard
+@app.get("/dashboard")
+async def dashboard():
+    """Serve the dashboard page"""
+    dashboard_file = "/app/static/frontend/dashboard.html" if os.path.exists("/app/static") else "../frontend/dashboard.html"
+    return FileResponse(dashboard_file)
+
+# Serve login page
+@app.get("/login")
+async def login():
+    """Serve the login page"""
+    login_file = "/app/static/frontend/log-in.html" if os.path.exists("/app/static") else "../frontend/log-in.html"
+    return FileResponse(login_file)
+
 
 if __name__ == "__main__":
     import uvicorn
