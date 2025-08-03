@@ -1,9 +1,9 @@
 import logging
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Dict, Any
-from backend.app.services.job_service import fetch_jobs
-from backend.app.services.skill_service import extract_skills_from_job, analyze_skills_demand, get_skill_recommendations
-from backend.app.services.resource_service import fetch_resources
+from app.services.job_service import fetch_jobs
+from app.services.skill_service import extract_skills_from_job, analyze_skills_demand, get_skill_recommendations
+from app.services.resource_service import fetch_resources
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
