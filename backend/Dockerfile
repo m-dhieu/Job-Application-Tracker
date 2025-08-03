@@ -13,7 +13,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY .backend/app ./app
+COPY ./backend/app ./app
 
 # Copy frontend static files and index.html
 COPY ./frontend ./frontend
