@@ -4,9 +4,10 @@ from backend.app.services.resource_service import fetch_resources
 
 router = APIRouter()
 
-@@ -10,7 +11,76 @@ def get_resources(skill: str = Query(..., min_length=2)):
+@router.get("/")
+def get_resources(skill: str = Query(..., min_length=2)):
     """
-    Returns learning resources based on the requested skill.    
+    Returns learning resources based on the requested skill.
     """
     try:
         resources = fetch_resources(skill)
