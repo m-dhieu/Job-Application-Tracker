@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Logging in with:', email, password);
 
     // Redirect to dashboard page (replace with your actual destination)
-    window.location.href = 'dashboard.html';
+    window.location.href = '/static/dashboard.html';
   });
 
   // Handle signup form submission
