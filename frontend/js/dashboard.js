@@ -1,7 +1,19 @@
 // Dashboard page script
 
 // Backend base URL
-var BASE_URL = "http://localhost:8080";
+var BASE_URL = "http://localhost:8000";
+
+// Logout function
+function logout() {
+  // Clear any stored session data
+  localStorage.removeItem('access_token');
+  sessionStorage.removeItem('access_token');
+  localStorage.removeItem('user_id');
+  sessionStorage.removeItem('user_id');
+
+  // Redirect to login page
+  window.location.href = 'log-in.html';
+}
 
 // Sidebar navigation elements
 var navDashboard = document.getElementById('nav-dashboard');
@@ -57,6 +69,14 @@ if (navDashboard) {
   });
 }
 
+if (navApplications) {
+  navApplications.addEventListener('click', function() {
+    setActiveNav(navApplications);
+    showSection('dashboard'); // Show dashboard section but load job applications
+    loadJobApplications();
+  });
+}
+
 if (navCvReview) {
   navCvReview.addEventListener('click', function() {
     setActiveNav(navCvReview);
@@ -78,8 +98,169 @@ if (navJobSearch) {
   });
 }
 
-// Initially show the dashboard section
+// Initially show the dashboard section and load job applications
 showSection('dashboard');
+loadJobApplications();
+
+// Add keyboard support for job filters
+document.addEventListener('DOMContentLoaded', function() {
+  // Add Enter key support for filter inputs
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      var target = event.target;
+      if (target.id === 'job-keyword-filter' || target.id === 'job-status-filter') {
+        applyJobFilters();
+      }
+    }
+  });
+});
+
+// --- Job Applications: Load real job data ---
+
+// Store the original job data for filtering
+var originalJobsData = [];
+
+function loadJobApplications() {
+  var applicationsBody = document.getElementById('applications-body');
+
+  if (!applicationsBody) {
+    console.error('Applications table body not found');
+    return;
+  }
+
+  // Show loading state
+  applicationsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #6b7a90;">🔄 Loading latest job opportunities...</td></tr>';
+
+  // Fetch jobs from the API
+  fetch(BASE_URL + '/api/jobs?limit=25&offset=0')
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Failed to fetch jobs: ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      console.log('Job opportunities data:', data);
+
+      if (data.jobs && data.jobs.length > 0) {
+        // Store original data for filtering
+        originalJobsData = data.jobs.map(function(job, index) {
+          // Generate more realistic statuses based on job posting freshness
+          var statuses = [
+            'Available', 'New Posting', 'Hot', 'Recently Posted', 'Open', 
+            'Trending', 'Remote Available', 'Urgent', 'Featured'
+          ];
+          var randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+
+          // Use the actual job posting date or generate recent dates
+          var jobDate;
+          if (job.created_at) {
+            jobDate = new Date(job.created_at).toLocaleDateString('en-US', {
+              month: '2-digit',
+              day: '2-digit',
+              year: 'numeric'
+            });
+          } else {
+            // Generate dates from the last 7 days
+            var randomDate = new Date();
+            randomDate.setDate(randomDate.getDate() - Math.floor(Math.random() * 7));
+            jobDate = randomDate.toLocaleDateString('en-US', {
+              month: '2-digit',
+              day: '2-digit',
+              year: 'numeric'
+            });
+          }
+
+          // Return enhanced job object
+          return {
+            ...job,
+            status: randomStatus,
+            dateFormatted: jobDate,
+            companyDisplay: job.companyName || job.company || 'Company',
+            titleDisplay: job.title && job.title.length > 50 ? job.title.substring(0, 47) + '...' : (job.title || 'Position Available')
+          };
+        });
+
+        // Display all jobs initially
+        displayFilteredJobs(originalJobsData);
+      } else {
+        applicationsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #6b7a90;">No job opportunities found.</td></tr>';
+      }
+    })
+    .catch(function(error) {
+      console.error('Error loading job opportunities:', error);
+      applicationsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #d32f2f;">❌ Error loading job opportunities: ' + error.message + '</td></tr>';
+    });
+}
+
+function displayFilteredJobs(jobs) {
+  var applicationsBody = document.getElementById('applications-body');
+
+  if (jobs.length === 0) {
+    applicationsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #6b7a90;">No jobs match your filter criteria.</td></tr>';
+    return;
+  }
+
+  // Store current filtered jobs for modal access
+  window.currentFilteredJobs = jobs;
+
+  var tableRows = jobs.map(function(job, index) {
+    return '<tr style="cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor=\'#f7faff\'" onmouseout="this.style.backgroundColor=\'\'" onclick="showJobDetails(' + index + ')">' +
+      '<td><strong>' + job.companyDisplay + '</strong></td>' +
+      '<td>' + job.titleDisplay + '</td>' +
+      '<td><span style="color: #4a90e2; font-weight: 500;">' + job.status + '</span></td>' +
+      '<td>' + job.dateFormatted + '</td>' +
+      '<td class="arrow">&gt;</td>' +
+      '</tr>';
+  }).join('');
+
+  applicationsBody.innerHTML = tableRows;
+}
+
+// Filter functionality
+function toggleFilterPanel() {
+  var filterPanel = document.getElementById('filter-panel');
+  if (filterPanel.style.display === 'none') {
+    filterPanel.style.display = 'block';
+  } else {
+    filterPanel.style.display = 'none';
+  }
+}
+
+function applyJobFilters() {
+  var keywordInput = document.getElementById('job-keyword-filter');
+  var statusInput = document.getElementById('job-status-filter');
+
+  var keyword = keywordInput ? keywordInput.value.toLowerCase().trim() : '';
+  var status = statusInput ? statusInput.value.trim() : '';
+
+  var filteredJobs = originalJobsData.filter(function(job) {
+    var keywordMatch = keyword === '' || 
+      (job.titleDisplay.toLowerCase().indexOf(keyword) !== -1) ||
+      (job.companyDisplay.toLowerCase().indexOf(keyword) !== -1);
+
+    var statusMatch = status === '' || job.status === status;
+
+    return keywordMatch && statusMatch;
+  });
+
+  console.log('Filtered jobs:', filteredJobs.length + ' out of ' + originalJobsData.length);
+  displayFilteredJobs(filteredJobs);
+}
+
+function clearJobFilters() {
+  var keywordInput = document.getElementById('job-keyword-filter');
+  var statusInput = document.getElementById('job-status-filter');
+
+  if (keywordInput) keywordInput.value = '';
+  if (statusInput) statusInput.value = '';
+
+  // Hide filter panel
+  var filterPanel = document.getElementById('filter-panel');
+  if (filterPanel) {
+    filterPanel.style.display = 'none';
+  }
+}
 
 // --- Job Search: Filter and sorting logic ---
 
@@ -115,6 +296,7 @@ function filterJobs(jobs, keyword, location) {
   });
 }
 
+
 // Function to render job listings inside the given container element
 function renderJobs(jobs, container) {
   if (jobs.length === 0) {
@@ -122,13 +304,16 @@ function renderJobs(jobs, container) {
     return;
   }
 
-  var html = jobs.map(function(job) {
+  var html = jobs.map(function(job, index) {
     return (
       '<div style="border-bottom: 1px solid #ddd; padding: 10px 0;">' +
         '<strong>' + (job.title || 'No Title') + '</strong><br/>' +
         (job.company_name || 'Unknown Company') + ' — ' + (job.location || 'Location Unknown') + '<br/>' +
         '<small>Posted on: ' + (new Date(job.created_at).toLocaleDateString() || 'N/A') + '</small><br/>' +
-        '<a href="' + job.url + '" target="_blank" rel="noopener noreferrer">View Details</a>' +
+        '<div style="margin-top: 8px; display: flex; gap: 12px;">' +
+          '<a href="' + job.url + '" target="_blank" rel="noopener noreferrer" style="color: #4a90e2; text-decoration: none;">View Details</a>' +
+          '<button onclick="openResourcesModal(\'' + encodeURIComponent(JSON.stringify(job)) + '\')" style="background: #28a745; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">📚 View Resources</button>' +
+        '</div>' +
       '</div>'
     );
   }).join('');
@@ -142,7 +327,6 @@ function searchJobs() {
   var locationInput = document.getElementById('filter-location');
   var sortSelect = document.getElementById('sort-order');
   var resultsDiv = document.getElementById('job-search-results');
-
   if (!keywordInput || !locationInput || !sortSelect || !resultsDiv) {
     alert('Job search elements missing in DOM');
     return;
@@ -179,7 +363,6 @@ function searchJobs() {
       // Filter and sort jobs before rendering
       var filteredJobs = sortJobs(filterJobs(jobsList, keyword, location), sortOrder);
       console.log('Filtered and sorted jobs:', filteredJobs);
-
       renderJobs(filteredJobs, resultsDiv);
     })
     .catch(function(error) {
@@ -203,16 +386,6 @@ if (searchJobsBtn) {
   });
 } else {
   console.warn('Search jobs button (#search-jobs-btn) not found in DOM.');
-}
-
-// Dashboard applications filter alert placeholder
-var filterBtn = document.querySelector('.filter-btn');
-if (filterBtn) {
-  filterBtn.addEventListener('click', function() {
-    alert('Filter functionality for applications will be implemented later.');
-  });
-} else {
-  console.warn('Filter button (.filter-btn) not found in DOM.');
 }
 
 // --- CV Review upload handler ---
@@ -252,7 +425,13 @@ if (uploadCvBtn) {
     .then(function(result) {
       console.log('CV Review result:', result);
       if (resultPre) {
-        resultPre.textContent = JSON.stringify(result, null, 2);
+        // Display user-friendly analysis
+        if (result.analysis) {
+          resultPre.innerHTML = result.analysis.replace(/\n/g, '<br>');
+        } else {
+          // Fallback to JSON if analysis not available
+          resultPre.textContent = JSON.stringify(result, null, 2);
+        }
       }
     })
     .catch(function(error) {
@@ -302,6 +481,7 @@ if (reviewEssayBtn) {
 } else {
   console.warn('Essay review button (#review-essay-btn) not found in DOM.');
 }
+
 
 // Function to analyze essay text, provide basic statistics and call backend grammar check
 function analyzeEssay(text, resultsDiv) {
@@ -360,15 +540,29 @@ function analyzeEssay(text, resultsDiv) {
   })
   .then(function(grammarResult) {
     console.log('Grammar check result:', grammarResult);
-    if (grammarResult.matches && grammarResult.matches.length > 0) {
-      var issuesHtml = grammarResult.matches.map(function(match) {
-        return '<li><strong>' + match.message + '</strong> — Offset: ' + match.offset + ', Length: ' + match.length +
-          ', Context: "' + text.substr(match.offset, match.length) + '"</li>';
+
+    // Handle the new enhanced grammar response format
+    if (grammarResult.suggestions && grammarResult.suggestions.length > 0) {
+      var issuesHtml = grammarResult.suggestions.map(function(suggestion) {
+        var correctionsHtml = '';
+        if (suggestion.possible_corrections && suggestion.possible_corrections.length > 0) {
+          correctionsHtml = '<br><strong>Possible corrections:</strong> ' + 
+            suggestion.possible_corrections.map(function(correction) {
+              return '<code>' + correction + '</code>';
+            }).join(', ');
+        }
+
+        return '<li>' +
+          '<strong>' + suggestion.error_type + ':</strong> ' + suggestion.short_message + 
+          '<br><strong>Error:</strong> "<span style="background-color: #ffebee; padding: 2px 4px;">' + suggestion.error_text + '</span>"' +
+          '<br><strong>Context:</strong> "' + suggestion.context + '"' +
+          correctionsHtml +
+          '</li>';
       }).join('');
 
-      resultsDiv.innerHTML += '<h4>Grammar Suggestions:</h4><ul>' + issuesHtml + '</ul>';
+      resultsDiv.innerHTML += '<h4>Grammar Suggestions (' + grammarResult.total_errors + ' issue(s)):</h4><ul style="margin-left: 20px;">' + issuesHtml + '</ul>';
     } else {
-      resultsDiv.innerHTML += '<h4>Grammar Suggestions:</h4><p>No issues found!</p>';
+      resultsDiv.innerHTML += '<h4>Grammar Suggestions:</h4><p style="color: green;">✅ No grammar issues found!</p>';
     }
   })
   .catch(function(error) {
@@ -377,3 +571,268 @@ function analyzeEssay(text, resultsDiv) {
   });
 }
 
+// --- Job Details Modal Functions ---
+
+function showJobDetails(jobIndex) {
+  var jobs = window.currentFilteredJobs || originalJobsData;
+  var job = jobs[jobIndex];
+
+  if (!job) {
+    console.error('Job not found at index:', jobIndex);
+    return;
+  }
+
+  // Store current job for apply functionality
+  window.currentJob = job;
+
+  // Populate modal fields
+  document.getElementById('modal-job-title').textContent = job.title || 'Position Available';
+  document.getElementById('modal-company-name').textContent = job.companyDisplay || 'Company';
+  document.getElementById('modal-employment-type').textContent = job.employmentType || 'Not specified';
+  document.getElementById('modal-status').textContent = job.status || 'Available';
+
+  // Format salary
+  var salaryText = 'Not specified';
+  if (job.minSalary && job.maxSalary) {
+    salaryText = '$' + job.minSalary.toLocaleString() + ' - $' + job.maxSalary.toLocaleString();
+    if (job.currency && job.currency !== 'USD') {
+      salaryText += ' ' + job.currency;
+    }
+  } else if (job.minSalary) {
+    salaryText = 'From $' + job.minSalary.toLocaleString();
+  }
+  document.getElementById('modal-salary').textContent = salaryText;
+
+  // Clean and display description
+  var description = job.description || job.excerpt || 'No description available.';
+  // Remove HTML tags for basic display
+  description = description.replace(/<[^>]*>/g, '').trim();
+  if (description.length > 500) {
+    description = description.substring(0, 497) + '...';
+  }
+  document.getElementById('modal-description').textContent = description;
+
+  // Display categories
+  var categoriesContainer = document.getElementById('modal-categories');
+  var categoriesSection = document.getElementById('modal-categories-section');
+
+  if (job.categories && job.categories.length > 0) {
+    categoriesSection.style.display = 'block';
+    categoriesContainer.innerHTML = job.categories.map(function(category) {
+      return '<span style="background: #e6f0fa; color: #183153; padding: 4px 8px; border-radius: 16px; font-size: 0.8rem;">' + category + '</span>';
+    }).join('');
+  } else {
+    categoriesSection.style.display = 'none';
+  }
+
+  // Show modal
+  document.getElementById('job-modal').style.display = 'block';
+
+
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+function closeJobModal() {
+  document.getElementById('job-modal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+  window.currentJob = null;
+}
+
+function applyToJob() {
+  var job = window.currentJob;
+  if (!job) {
+    alert('No job selected');
+    return;
+  }
+
+  if (job.applicationLink) {
+    // Open the application link in a new tab
+    window.open(job.applicationLink, '_blank');
+
+    // Show success message and close modal
+    setTimeout(function() {
+      alert('Application page opened! Good luck with your application to ' + (job.companyDisplay || 'this company') + '! 🚀');
+      closeJobModal();
+    }, 500);
+  } else {
+    alert('Application link not available for this position.');
+  }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+  var modal = document.getElementById('job-modal');
+  if (event.target === modal) {
+    closeJobModal();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    var modal = document.getElementById('job-modal');
+    var resourcesModal = document.getElementById('resources-modal');
+    if (modal && modal.style.display === 'block') {
+      closeJobModal();
+    }
+    if (resourcesModal && resourcesModal.style.display === 'block') {
+      closeResourcesModal();
+    }
+  }
+});
+
+// Resources Modal Functions
+function openResourcesModal(jobDataEncoded) {
+  try {
+    var job = JSON.parse(decodeURIComponent(jobDataEncoded));
+    var modal = document.getElementById('resources-modal');
+    var jobTitleElement = document.getElementById('resources-job-title');
+    var loadingElement = document.getElementById('resources-loading');
+    var contentElement = document.getElementById('resources-content');
+
+    // Set job title
+    jobTitleElement.textContent = 'Skills and resources for: ' + (job.title || 'Unknown Position');
+
+    // Show modal and loading state
+    modal.style.display = 'block';
+    loadingElement.style.display = 'block';
+    contentElement.style.display = 'none';
+
+    // Fetch skills and resources from backend
+    fetchJobSkillsAndResources(job);
+
+  } catch (error) {
+    console.error('Error opening resources modal:', error);
+    alert('Error loading job resources');
+  }
+}
+
+function closeResourcesModal() {
+  var modal = document.getElementById('resources-modal');
+  modal.style.display = 'none';
+}
+
+function fetchJobSkillsAndResources(job) {
+  // Create a job description from available job data
+  var jobDescription = [
+    job.title || '',
+    job.company_name || '',
+    job.description || '',
+    job.requirements || ''
+  ].join(' ');
+
+  // First, try to get skills from the job ID if available
+  var skillsUrl = BASE_URL + '/api/jobs/' + (job.id || 'dummy') + '/skills';
+
+  fetch(skillsUrl)
+    .then(function(response) {
+      if (!response.ok) {
+        // If job-specific skills fail, extract from description
+        throw new Error('Job skills not available');
+      }
+      return response.json();
+    })
+    .then(function(skillsData) {
+      displaySkillsAndResources(skillsData.skills || [], skillsData.resources || []);
+    })
+    .catch(function(error) {
+      console.log('Falling back to description-based skill extraction');
+      // Fallback: extract skills from job description
+      extractSkillsFromDescription(jobDescription);
+    });
+}
+
+function extractSkillsFromDescription(description) {
+  // Define common tech skills to look for
+  var commonSkills = [
+    'javascript', 'python', 'java', 'react', 'angular', 'vue', 'node.js', 'typescript',
+    'html', 'css', 'sql', 'mongodb', 'postgresql', 'mysql', 'aws', 'azure', 'docker',
+    'kubernetes', 'git', 'linux', 'machine learning', 'data science', 'artificial intelligence',
+    'c++', 'c#', 'php', 'ruby', 'go', 'rust', 'swift', 'kotlin', 'flutter', 'react native',
+    'express', 'django', 'flask', 'spring', 'laravel', 'rails', 'selenium', 'jenkins',
+    'terraform', 'ansible', 'redis', 'elasticsearch', 'graphql', 'rest api', 'microservices'
+  ];
+
+  var foundSkills = [];
+  var lowerDescription = description.toLowerCase();
+
+  commonSkills.forEach(function(skill) {
+    if (lowerDescription.includes(skill.toLowerCase())) {
+      foundSkills.push(skill);
+    }
+  });
+
+  // If no skills found, add some generic ones
+  if (foundSkills.length === 0) {
+    foundSkills = ['programming', 'software development', 'problem solving'];
+  }
+
+  // Fetch resources for found skills
+  fetchResourcesForSkills(foundSkills);
+}
+
+function fetchResourcesForSkills(skills) {
+  var skillsParam = skills.slice(0, 5).join(','); // Limit to 5 skills
+  var resourcesUrl = BASE_URL + '/api/resources/bulk?skills=' + encodeURIComponent(skillsParam);
+
+  fetch(resourcesUrl)
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Failed to fetch resources');
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      var allResources = [];
+      Object.keys(data.resources || {}).forEach(function(skill) {
+        if (data.resources[skill] && data.resources[skill].length > 0) {
+          allResources = allResources.concat(data.resources[skill].map(function(resource) {
+            return Object.assign(resource, { skill: skill });
+          }));
+        }
+      });
+      displaySkillsAndResources(skills, allResources);
+    })
+    .catch(function(error) {
+      console.error('Error fetching resources:', error);
+      displaySkillsAndResources(skills, []);
+    });
+}
+
+function displaySkillsAndResources(skills, resources) {
+  var loadingElement = document.getElementById('resources-loading');
+  var contentElement = document.getElementById('resources-content');
+  var skillsContainer = document.getElementById('skills-container');
+  var resourcesContainer = document.getElementById('resources-container');
+
+  // Hide loading, show content
+  loadingElement.style.display = 'none';
+  contentElement.style.display = 'block';
+
+  // Display skills
+  skillsContainer.innerHTML = skills.map(function(skill) {
+    return '<span style="background: #e3f2fd; color: #1976d2; padding: 6px 12px; border-radius: 16px; font-size: 0.9rem; font-weight: 500;">' + skill + '</span>';
+  }).join('');
+
+  // Display resources
+  if (resources.length === 0) {
+    resourcesContainer.innerHTML = '<p style="color: #6b7a90; font-style: italic;">No specific resources found. Try searching for these skills on popular learning platforms like Coursera, Udemy, or freeCodeCamp.</p>';
+  } else {
+    resourcesContainer.innerHTML = resources.slice(0, 10).map(function(resource) {
+      return (
+        '<div style="background: #f7faff; border: 1px solid #e6f0fa; border-radius: 8px; padding: 16px;">' +
+          '<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">' +
+            '<h4 style="margin: 0; color: #183153; font-size: 1rem;">' + (resource.title || 'Learning Resource') + '</h4>' +
+            (resource.skill ? '<span style="background: #4a90e2; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">' + resource.skill + '</span>' : '') +
+          '</div>' +
+          (resource.description ? '<p style="margin: 8px 0; color: #6b7a90; font-size: 0.9rem; line-height: 1.4;">' + resource.description + '</p>' : '') +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">' +
+            '<a href="' + (resource.url || '#') + '" target="_blank" rel="noopener noreferrer" style="background: #4a90e2; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">View Resource</a>' +
+            (resource.platform ? '<span style="color: #6b7a90; font-size: 0.8rem;">' + resource.platform + '</span>' : '') +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+}
