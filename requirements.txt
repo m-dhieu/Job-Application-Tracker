@@ -1,5 +1,7 @@
 fastapi
 uvicorn[standard]
+databases
+sqlalchemy
 requests
 python-dotenv
 python-multipart
