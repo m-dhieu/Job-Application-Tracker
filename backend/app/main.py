@@ -44,7 +44,7 @@ app.add_middleware(
 @app.get("/")
 async def root():
     """Serve the main index.html page"""
-     return FileResponse(os.path.join(BASE_DIR, "index.html"))
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
 
 # Serve dashboard.html on /dashboard
 @app.get("/dashboard")
