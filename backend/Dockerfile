@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./backend/app ./app
 
 # Copy static files
-COPY ./frontend ./frontend_build
+COPY ./frontend ./frontend
 
 # Expose container port (configurable via environment variable; default 8080)
 ENV PORT=8080
