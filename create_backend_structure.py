@@ -22,16 +22,19 @@ structure = {
             "grammar_service.py": "",
             "resource_service.py": ""
         },
-        "models": {},
-        "schemas": {},
-        "core": {
+        "models.py": {},
+        "database_old.py": {},
+        "database.py": {},
+        "database": {
             "__init__.py": "",
-            "config.py": ""
+            "applications.py": ""
+             "auth.py": ""
+             "connection.py": ""
+             "manager.py": ""
+            "models.py": ""
+            "users.py": ""
         },
-        "dependencies.py": "",
-        "utils.py": ""
     },
-    "tests": {},
     ".env": "",
     "requirements.txt": "",
     "Dockerfile": "",
@@ -46,7 +49,7 @@ def create_structure(base_path, struct):
                 os.makedirs(path)
             create_structure(path, content)
         else:
-            # content is file content (empty string for now)
+            # content is file content (empty)
             with open(path, 'w') as f:
                 f.write(content)
 
