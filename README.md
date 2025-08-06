@@ -6,7 +6,6 @@
 
 This application is a backend FastAPI service integrated with a simple frontend. It leverages external APIs and provides a meaningful user experience by allowing user authentication, personalized data handling, and other interactive features. The app is designed for deployment on a load-balanced infrastructure for scalability and availability. It simulates a job application tracker.
 
-
 **Key functionalities include:**  
 - User job application tracking (CRUD)  
 - Fetching new job listings from external APIs  
@@ -18,21 +17,11 @@ This application is a backend FastAPI service integrated with a simple frontend.
 ---
 
 
-## Resources
+## Demo Video
 
 
-APIs Used:
-- Grammar check by [LanguageTool API](https://dev.languagetool.org/public-http-api.html) 
-- Job listings by [Himalayas API](https://himalayas.app/jobs/api) 
-- Resume parsing by Resume Parsing API by [Rapid API](https://rapidapi.com/my-path-my-path-default/api/resume-parser-and-analyzer)
-
-Tools Used:
-- Return static resources for demonstration from [Khan Academy](https://www.khanacademy.org)  
-- Return static resources for demonstration from [freecodecamp](https://www.freecodecamp.org)  
-- Regex patterns for scraping skills from job descriptions/URL
-- Database manager with SQLite database
-
-View documentation after running the application at [Job Application Endpoints](http://localhost:8080/docs) to see a list of endpoints and schemas grouped under main prefixes based on the routers in my backend app setup. These organize all the API endpoints exposed for my application. These include: Job application tracking, CRUD actions, Resume/CV review and tailoring, Cover letter/essay grammar feedback, Skill gap analysis and recommendations, User authentication (login/signup), User management
+Link to demo video showcasing application usage:  
+[Demo Video](https://youtu.be/gf6kQNri6hk)
 
 
 ---
@@ -45,35 +34,23 @@ View documentation after running the application at [Job Application Endpoints](
 
 git clone https://github.com/m-dhieu/API_Driven-Load-Balanced-App.git
 
-`cd API_Driven-Load-Balanced-App/backend`
+`cd API_Driven-Load-Balanced-App`
 
 
-### (Optional) Create and activate Python virtual environment:
+### Run the application with a Docker container locally:
 
-`python3 -m venv venv`
+`docker compose up -d --build`
 
-`source venv/bin/activate`
-
-
-### Install dependencies:
-
-`pip install -r requirements.txt`
-
-
-### Set environment variables (API keys):
-
-`export RAPIDAPI_KEY="your_actual_rapidapi_key"`
-
-Add other keys as needed
-
-
-### Run the backend FastAPI app:
-
-`uvicorn app.main:app --reload`
+Ensure you have Docker installed
 
 Open your browser at: [http://localhost:8080](http://localhost:8080)
 
-Make sure the frontend's JS calls the backend APIs at `http://localhost:8080`.
+The frontend JS should call the backend APIs at http://localhost:8080.
+
+
+### Test locally:
+
+`curl http://localhost:8080`
 
 
 ---
@@ -87,12 +64,12 @@ Make sure the frontend's JS calls the backend APIs at `http://localhost:8080`.
 
 From project root:
 
-`docker build -f backend/Dockerfile -t yourdockerhubusername/api-driven-app:v1 .`
+`docker build -f backend/Dockerfile -t mydockerhubusername/myimagename:v1 .`
 
 
 ### Run Docker container locally:
 
-`docker run -p 8080:8080 yourdockerhubusername/api-driven-app:v1`
+`docker run -p 8080:8080 mydockerhubusername/myimagename:v1`
 
 
 Test API:
@@ -105,7 +82,7 @@ or:
 
 Adjust the endpoint as per the app routes.
 
-Note: A straightforward way is to bring up the lab environment from the project root to build the image on the first run, as shown in [image1](https://imgpx.com/7UWcQHRBcP4J.jpg) and [image2](https://imgpx.com/KVURgDE52Zdy.jpg). Use:
+Note: A straightforward way is to bring up the lab environment from the project root to build the image on the first run, as shown in [image1](https://imgpx.com/7UWcQHRBcP4J.jpg), [image2](https://imgpx.com/U5m6XldJ1s8J.png), and [image3](https://imgpx.com/KVURgDE52Zdy.jpg). Use:
 
 `docker compose up -d --build`
 
@@ -128,8 +105,9 @@ SSH into each server and perform:
 
 Confirm app accessibility at:
 
-- http://web-01:8080  
-- http://web-02:8080  
+- [web-01](http://52.91.19.144:8080) 
+- [web-02](http://13.221.66.135:8080)
+- [@mdhieu.tech](http://mdhieu.tech:8080)
 
 
 ---
@@ -178,7 +156,7 @@ You can loop and create custom headers like 'mdhieu' for 'web01' and 'aben' for 
 
 Example running container with environment variable:
 
-`docker run -d -p 8080:8080 -e RAPIDAPI_KEY="your_actual_rapidapi_key" yourdockerhubusername/api-driven-app:v1`
+`docker run -d -p 8080:8080 -e RAPIDAPI_KEY="your_actual_rapidapi_key" yourdockerhubusername/yourimagename:v1`
 
 
 ---
@@ -196,22 +174,32 @@ Example running container with environment variable:
 ---
 
 
+## Resources
+
+
+APIs Used:
+- Grammar check by [LanguageTool API](https://dev.languagetool.org/public-http-api.html) 
+- Job listings by [Himalayas API](https://himalayas.app/jobs/api) 
+- Resume parsing by Resume Parsing API by [Rapid API](https://rapidapi.com/my-path-my-path-default/api/resume-parser-and-analyzer)
+
+Tools Used:
+- Return static resources for demonstration from [Khan Academy](https://www.khanacademy.org)  
+- Return static resources for demonstration from [freecodecamp](https://www.freecodecamp.org)  
+- Regex patterns for scraping skills from job descriptions/URL
+- Database manager with SQLite database
+
+View documentation after running the application at [http://localhost:8080/docs](http://localhost:8080/docs) to see a list of endpoints and schemas grouped under main prefixes based on the routers in my backend app setup. These organize all the API endpoints exposed for my application. These include: Job application tracking, CRUD actions, Resume/CV review and tailoring, Cover letter/essay grammar feedback, Skill gap analysis and recommendations, User authentication (login/signup), User management
+
+
+---
+
+
 ## Credits
 
 
 - External API providers: [LanguageTool API](https://dev.languagetool.org/public-http-api.html), [Himalayas API](https://himalayas.app/jobs/api), [Rapid API](https://rapidapi.com/my-path-my-path-default/api/resume-parser-and-analyzer)
 - Frameworks and tools: FastAPI, HAProxy, Docker, Regex   
 - Learning resources: [Responsive Web Design Basics - Google Developers](https://developers.google.com/web/fundamentals/design-and-ux/responsive), [waka-man github](https://github.com/waka-man/web_infra_lab), [Reqres API Docs](https://reqres.in/api-docs/), [freecodecamp](https://www.freecodecamp.org) 
-
-
----
-
-
-## Demo Video
-
-
-Link to demo video showcasing application usage:  
-[Demo Video](https://youtu.be/gf6kQNri6hk)
 
 
 ---
@@ -244,6 +232,33 @@ API_Driven-Load-Balanced-App/
 
 ---
 
+
+## License
+
+This project is under the MIT License.
+
+
+---
+
+
+## Contributing
+
+Welcome to contribute:
+
+1. Fork the repository.
+
+2. Create a new branch for your feature or bug fix.
+
+3. Commit your changes with clear, concise messages.
+
+4. Push to your fork and open a pull request.
+
+Thank you for considering contributing. Feel free to open issues for questions, suggestions, or bug reports.
+
+
+---
+
+
 ## Contact
 
 For any queries or feedback, reach out to:
@@ -252,6 +267,8 @@ For any queries or feedback, reach out to:
 Email: [m.dhieu@alustudent.com](mailto:m.dhieu@alustudent.com)  
 GitHub: [https://github.com/m-dhieu](https://github.com/m-dhieu) 
 
+
 ---
 
 *Friday, August 1, 2025*
+
