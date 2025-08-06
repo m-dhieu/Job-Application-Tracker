@@ -4,11 +4,11 @@
 ## Overview
 
 
-This application is a backend FastAPI service integrated with a simple frontend. It leverages external APIs and provides a meaningful user experience by allowing user authentication, personalized data handling, and other interactive features. The app is designed for deployment on a load-balanced infrastructure for scalability and availability. It simulates a job application tracker.
+This application is a backend FastAPI service integrated with a simple frontend. It leverages external APIs and provides a meaningful user experience by allowing user authentication, personalized data handling, and other interactive features. The app is designed for deployment on a load-balanced infrastructure for scalability and availability. It simulates a job (tech roles) application tracker.
 
 **Key functionalities include:**  
 - User job application tracking (CRUD)  
-- Fetching new job listings from external APIs  
+- Fetching new job listings (tech roles) from external APIs  
 - Resume/CV review tailored to job applications  
 - Skill gap analysis and resource recommendations  
 - Essay (cover letter) grammar feedback 
@@ -271,5 +271,6 @@ GitHub: [https://github.com/m-dhieu](https://github.com/m-dhieu)
 ---
 
 *Friday, August 1, 2025*
+
 
 
