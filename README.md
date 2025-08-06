@@ -11,7 +11,7 @@ This application is a backend FastAPI service integrated with a simple frontend.
 - Fetching new job listings from external APIs  
 - Resume/CV review tailored to job applications  
 - Skill gap analysis and resource recommendations  
-- Essay (cover letter) grammar feedback  
+- Essay (cover letter) grammar feedback 
 
 
 ---
@@ -243,7 +243,7 @@ This project is under the MIT License.
 
 ## Contributing
 
-Welcome to contribute:
+Welcome to contribute (improve authentication, log out, ...):
 
 1. Fork the repository.
 
@@ -271,4 +271,5 @@ GitHub: [https://github.com/m-dhieu](https://github.com/m-dhieu)
 ---
 
 *Friday, August 1, 2025*
+
 
