@@ -105,9 +105,9 @@ SSH into each server and perform:
 
 Confirm app accessibility at:
 
-- [web-01](http://52.91.19.144:8080) 
+- [web-01](http://52.91.19.144:8088) 
 - [web-02](http://13.221.66.135:8080)
-- [@mdhieu.tech](http://mdhieu.tech:8080)
+- [@mdhieu.tech](http://mdhieu.tech:8088)
 
 
 ---
@@ -271,6 +271,7 @@ GitHub: [https://github.com/m-dhieu](https://github.com/m-dhieu)
 ---
 
 *Friday, August 1, 2025*
+
 
 
 
