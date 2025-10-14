@@ -1,4 +1,4 @@
-# API-Driven Load-Balanced Application
+# Job Application Tracker
 
 
 ## Overview
@@ -32,9 +32,9 @@ Link to demo video showcasing application usage:
 
 ### Clone the repository to your local machine:
 
-git clone https://github.com/m-dhieu/API_Driven-Load-Balanced-App.git
+git clone https://github.com/m-dhieu/Job-Application-Tracker.git
 
-`cd API_Driven-Load-Balanced-App`
+`cd Job-Application-Tracker`
 
 
 ### Run the application with a Docker container locally:
@@ -98,9 +98,9 @@ Note: A straightforward way is to bring up the lab environment from the project 
 
 SSH into each server and perform:
 
-`docker pull mdhieu/api_driven-load-balanced-app:v1`
+`docker pull mydockerhubusername/myimagename:v1` 
 
-`docker run -d --name app11 --restart unless-stopped -p 8080:8080 mdhieu/api_driven-load-balanced-app:v1`
+`docker run -d --name appname --restart unless-stopped -p 8080:8080 mydockerhubusername/myimagename:v1`
 
 
 Confirm app accessibility at:
@@ -271,6 +271,7 @@ GitHub: [https://github.com/m-dhieu](https://github.com/m-dhieu)
 ---
 
 *Friday, August 1, 2025*
+
 
 
 
